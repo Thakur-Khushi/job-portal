@@ -50,7 +50,8 @@ function AppContent() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className="flex-grow">
+      {/* Add top padding to avoid overlap with fixed Navbar */}
+      <div className="flex-grow pt-20 md:pt-24">
         <Routes>
           <Route path="/" element={<Navigate to="/jobs" />} />
           <Route path="/login" element={<Login />} />

@@ -1,70 +1,73 @@
-# Getting Started with Create React App
+# Job Portal Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Frontend application for the Job Portal platform.
 
-## Available Scripts
+For complete project documentation (backend + frontend), see the root README at `../README.md`.
 
-In the project directory, you can run:
+## Stack
 
-### `npm start`
+- React (Create React App)
+- React Router
+- Axios
+- Tailwind CSS
+- Animate.css
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Setup
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+cd frontend
+npm install
+npm start
+```
 
-### `npm test`
+Default local URL: `http://localhost:3000`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Scripts
 
-### `npm run build`
+- `npm start` - Start development server
+- `npm run build` - Build production bundle
+- `npm test` - Run tests
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Environment Variables
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Create `.env` in `frontend/` when needed.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- `REACT_APP_API_URL=http://localhost:5000/api`
+- `REACT_APP_BACKEND_URL=http://localhost:5000`
 
-### `npm run eject`
+Notes:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- Variables must start with `REACT_APP_`.
+- Restart the dev server after changing environment variables.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Production Deployment (Netlify)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Recommended free setup:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- Frontend: Netlify
+- Backend: Render
+- Database: MongoDB Atlas
 
-## Learn More
+Netlify build settings:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Base directory: `frontend`
+- Build command: `npm run build`
+- Publish directory: `build`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Netlify environment variables:
 
-### Code Splitting
+- `REACT_APP_API_URL=https://your-backend-domain/api`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+After frontend deploy:
 
-### Analyzing the Bundle Size
+- Update backend `CORS_ORIGIN` to exact frontend URL
+- Redeploy backend
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Troubleshooting
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- API requests fail:
+  - Verify `REACT_APP_API_URL` is correct and reachable.
+- CORS errors:
+  - Ensure backend `CORS_ORIGIN` exactly matches frontend URL.
+- Build issues:
+  - Remove `node_modules` and reinstall dependencies.

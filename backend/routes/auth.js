@@ -26,7 +26,8 @@ const generateRefreshToken = async (userId) => {
 
     const tokenDoc = new RefreshToken({
       userId,
-      token: refreshTokenHash,
+      token: refreshToken,
+      tokenHash: refreshTokenHash,
       expiresAt,
     });
 

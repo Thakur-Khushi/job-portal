@@ -8,6 +8,8 @@ import Toast from '../components/Toast';
 import ConfirmDialog from '../components/ConfirmDialog';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const BACKEND_URL =
+  process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
 
 const JobDetail = () => {
   const [job, setJob] = useState(null);
@@ -784,7 +786,7 @@ const JobDetail = () => {
                           Uploaded Resume:
                         </p>
                         <a
-                          href={`http://localhost:5000/${selectedApplicant.resume}`}
+                          href={`${BACKEND_URL}/${selectedApplicant.resume}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium"
@@ -1035,7 +1037,7 @@ const JobDetail = () => {
                             setSendingMessage(true);
                             try {
                               const res = await axios.post(
-                                `http://localhost:5000/api/applications/${selectedApplicant._id}/message`,
+                                `${API_URL}/applications/${selectedApplicant._id}/message`,
                                 { message: messageText, type: 'note' },
                                 { headers: { 'x-auth-token': token } },
                               );

@@ -59,8 +59,8 @@ export const uploadResume = async (file, token) => {
       formData,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
+          'x-auth-token': token,
+          // Don't set Content-Type - let axios handle it with proper boundary
         },
       },
     );
@@ -81,8 +81,8 @@ export const uploadProfilePicture = async (file, token) => {
       formData,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
+          'x-auth-token': token,
+          // Don't set Content-Type - let axios handle it with proper boundary
         },
       },
     );

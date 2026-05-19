@@ -1,2 +1,17 @@
+/* Fix input icon alignment for all browsers */
+.search-input-icon {
+	left: 0.75rem;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 1.25rem;
+	height: 1.25rem;
+	pointer-events: none;
+	position: absolute;
+	color: #9ca3af;
+}
+
+input.with-icon {
+	padding-left: 2.5rem !important;
+}
 /* SearchFilters Component Styles */
 /* Styles are handled by Tailwind CSS classes */

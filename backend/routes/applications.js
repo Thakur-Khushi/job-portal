@@ -42,7 +42,8 @@ router.post('/', auth, upload.single('resume'), async (req, res) => {
         resumePath = user.profile.resume;
       }
     } else if (req.file) {
-      resumePath = req.file.path;
+      // Store path in consistent format: /uploads/filename
+      resumePath = `/uploads/${req.file.filename}`;
     }
 
     const application = new Application({

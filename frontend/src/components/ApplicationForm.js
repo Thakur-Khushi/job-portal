@@ -97,7 +97,7 @@ const ApplicationForm = ({ jobId, onClose, onSubmit }) => {
       const res = await axios.post(`${API_URL}/applications`, applicationData, {
         headers: {
           'x-auth-token': token,
-          'Content-Type': 'multipart/form-data',
+          // Don't set Content-Type - let axios handle it with proper boundary for multipart/form-data
         },
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round(
@@ -119,14 +119,14 @@ const ApplicationForm = ({ jobId, onClose, onSubmit }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="bg-white dark:bg-gray-900 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white rounded-t-3xl">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold">Apply for Position</h2>
             <button
               onClick={onClose}
-              className="text-white/80 hover:text-white"
+              className="text-white/80 hover:text-white dark:text-gray-300 dark:hover:text-white"
             >
               <svg
                 className="w-6 h-6"
@@ -148,23 +148,23 @@ const ApplicationForm = ({ jobId, onClose, onSubmit }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Profile Summary */}
           {userProfile?.profile && (
-            <div className="bg-blue-50 p-4 rounded-xl">
+            <div className="bg-blue-50 dark:bg-blue-950/60 p-4 rounded-xl">
               <h3 className="font-semibold text-lg mb-2">Your Profile</h3>
               <div className="flex items-start space-x-4">
                 <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
                   {user?.name?.charAt(0)}
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium">
+                  <p className="font-medium dark:text-gray-100">
                     {userProfile.profile.title || 'No title set'}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     {userProfile.profile.skills?.length || 0} skills •{' '}
                     {userProfile.profile.experience?.length || 0} experiences
                   </p>
                   <a
                     href="/profile"
-                    className="text-blue-600 text-sm hover:underline"
+                    className="text-blue-600 dark:text-blue-400 text-sm hover:underline"
                   >
                     Update Profile →
                   </a>
@@ -175,10 +175,10 @@ const ApplicationForm = ({ jobId, onClose, onSubmit }) => {
 
           {/* Personal Information */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Personal Information</h3>
+            <h3 className="font-semibold text-lg dark:text-gray-100">Personal Information</h3>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-gray-700 text-sm mb-1">
+                <label className="block text-gray-700 dark:text-gray-200 text-sm mb-1">
                   Full Name *
                 </label>
                 <input
@@ -191,7 +191,7 @@ const ApplicationForm = ({ jobId, onClose, onSubmit }) => {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 text-sm mb-1">
+                <label className="block text-gray-700 dark:text-gray-200 text-sm mb-1">
                   Email *
                 </label>
                 <input

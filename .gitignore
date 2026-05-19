@@ -48,3 +48,4 @@ backend/uploads/
 
 # Build artifacts
 backend/dist/
+.env.example

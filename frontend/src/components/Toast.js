@@ -14,24 +14,24 @@ const Toast = ({
 
   const colors = {
     success: {
-      bg: 'bg-gradient-to-r from-green-500 to-emerald-600',
+      bg: 'bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-700 dark:to-emerald-800',
       icon: '✓',
-      light: 'bg-green-50 text-green-800 border-green-200',
+      light: 'bg-green-50 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-100 dark:border-green-700',
     },
     error: {
-      bg: 'bg-gradient-to-r from-red-500 to-rose-600',
+      bg: 'bg-gradient-to-r from-red-500 to-rose-600 dark:from-red-700 dark:to-rose-800',
       icon: '✕',
-      light: 'bg-red-50 text-red-800 border-red-200',
+      light: 'bg-red-50 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-100 dark:border-red-700',
     },
     info: {
-      bg: 'bg-gradient-to-r from-blue-500 to-cyan-600',
+      bg: 'bg-gradient-to-r from-blue-500 to-cyan-600 dark:from-blue-700 dark:to-cyan-800',
       icon: 'ℹ',
-      light: 'bg-blue-50 text-blue-800 border-blue-200',
+      light: 'bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-900 dark:text-blue-100 dark:border-blue-700',
     },
     warning: {
-      bg: 'bg-gradient-to-r from-yellow-500 to-orange-600',
+      bg: 'bg-gradient-to-r from-yellow-500 to-orange-600 dark:from-yellow-700 dark:to-orange-800',
       icon: '⚠',
-      light: 'bg-yellow-50 text-yellow-800 border-yellow-200',
+      light: 'bg-yellow-50 text-yellow-800 border-yellow-200 dark:bg-yellow-900 dark:text-yellow-100 dark:border-yellow-700',
     },
   }[type];
 
@@ -52,7 +52,7 @@ const Toast = ({
       aria-label={`${type} notification`}
     >
       <div
-        className={`${colors.bg} text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3 min-w-max max-w-xs border-l-4`}
+        className={`${colors.bg} text-white dark:text-gray-100 px-6 py-4 rounded-xl shadow-lg flex items-center gap-3 min-w-max max-w-xs border-l-4`}
       >
         <span className="text-xl font-bold flex-shrink-0">{colors.icon}</span>
         <span className="font-medium text-sm md:text-base leading-tight">

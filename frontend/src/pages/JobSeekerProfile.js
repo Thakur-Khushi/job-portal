@@ -638,7 +638,7 @@ const JobSeekerProfile = () => {
                   className={`px-6 py-3 rounded-xl font-medium transition-all ${
                     activeTab === tab.id
                       ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                      : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                      : 'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700'
                   }`}
                 >
                   <span className="mr-2">{tab.icon}</span>
@@ -789,12 +789,12 @@ const JobSeekerProfile = () => {
                       {profile.skills?.map((skill, index) => (
                         <span
                           key={index}
-                          className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm flex items-center group"
+                          className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm flex items-center group dark:bg-blue-900 dark:text-blue-200 border border-blue-200 dark:border-blue-700"
                         >
                           {skill}
                           <button
                             onClick={() => removeSkill(skill)}
-                            className="ml-2 text-blue-600 hover:text-red-600 transition"
+                            className="ml-2 text-blue-600 hover:text-red-600 transition dark:text-blue-300 dark:hover:text-red-400"
                           >
                             ×
                           </button>
@@ -806,13 +806,13 @@ const JobSeekerProfile = () => {
                         type="text"
                         value={newSkill}
                         onChange={(e) => setNewSkill(e.target.value)}
-                        className="modern-input flex-1"
+                        className="modern-input flex-1 dark:bg-gray-800 dark:text-blue-100 dark:placeholder:text-blue-300"
                         placeholder="Add a skill (e.g., React, Python)"
                         onKeyPress={(e) => e.key === 'Enter' && addSkill()}
                       />
                       <button
                         onClick={addSkill}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+                        className="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 dark:text-white"
                       >
                         Add
                       </button>
@@ -828,17 +828,17 @@ const JobSeekerProfile = () => {
                       {profile.languages?.map((lang, index) => (
                         <div
                           key={index}
-                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg dark:bg-gray-800"
                         >
                           <div>
-                            <span className="font-medium">{lang.name}</span>
-                            <span className="ml-2 text-sm text-gray-600">
+                            <span className="font-medium dark:text-blue-100">{lang.name}</span>
+                            <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">
                               - {lang.proficiency}
                             </span>
                           </div>
                           <button
                             onClick={() => removeLanguage(index)}
-                            className="text-red-600 hover:text-red-800"
+                            className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                           >
                             Remove
                           </button>
@@ -855,7 +855,7 @@ const JobSeekerProfile = () => {
                             name: e.target.value,
                           })
                         }
-                        className="modern-input"
+                        className="modern-input dark:bg-gray-800 dark:text-blue-100 dark:placeholder:text-blue-300"
                         placeholder="Language"
                       />
                       <select
@@ -866,7 +866,7 @@ const JobSeekerProfile = () => {
                             proficiency: e.target.value,
                           })
                         }
-                        className="modern-input"
+                        className="modern-input dark:bg-gray-800 dark:text-blue-100"
                       >
                         <option value="Basic">Basic</option>
                         <option value="Conversational">Conversational</option>
@@ -875,7 +875,7 @@ const JobSeekerProfile = () => {
                       </select>
                       <button
                         onClick={addLanguage}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+                        className="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 dark:text-white"
                       >
                         Add Language
                       </button>

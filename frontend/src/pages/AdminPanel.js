@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 const AdminPanel = () => {
   const [pendingJobs, setPendingJobs] = useState([]);
   const [users, setUsers] = useState([]);
@@ -16,16 +18,13 @@ const AdminPanel = () => {
   const fetchData = async () => {
     try {
       // Fetch pending jobs
-      const jobsRes = await axios.get(
-        'http://localhost:5000/api/jobs?status=pending',
-        {
-          headers: { 'x-auth-token': token },
-        },
-      );
+      const jobsRes = await axios.get(`${API_URL}/jobs?status=pending`, {
+        headers: { 'x-auth-token': token },
+      });
       setPendingJobs(jobsRes.data);
 
       // Fetch all users
-      const usersRes = await axios.get('http://localhost:5000/api/users', {
+      const usersRes = await axios.get(`${API_URL}/users`, {
         headers: { 'x-auth-token': token },
       });
       setUsers(usersRes.data);
@@ -39,7 +38,7 @@ const AdminPanel = () => {
   const handleJobApproval = async (jobId, status) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/jobs/${jobId}/approve`,
+        `${API_URL}/jobs/${jobId}/approve`,
         { status },
         { headers: { 'x-auth-token': token } },
       );
@@ -54,7 +53,7 @@ const AdminPanel = () => {
   const handleUserRoleChange = async (userId, newRole) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/users/${userId}/role`,
+        `${API_URL}/users/${userId}/role`,
         { role: newRole },
         { headers: { 'x-auth-token': token } },
       );
