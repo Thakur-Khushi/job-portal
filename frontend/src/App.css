@@ -46,8 +46,7 @@ p {
 }
 
 /* ===== BUTTONS ===== */
-.btn-modern,
-button:not([class*='disabled']) {
+.btn-modern {
   padding: 0.625rem 1.25rem;
   border-radius: 0.75rem;
   font-weight: 600;
@@ -122,9 +121,7 @@ button.bg-red-600:hover:not(:disabled) {
 }
 
 /* ===== CARDS ===== */
-.card,
-.bg-white,
-.bg-slate-50 {
+.card {
   background: var(--bg-base);
   color: var(--text-900);
   border-radius: 0.75rem;
@@ -133,24 +130,18 @@ button.bg-red-600:hover:not(:disabled) {
   transition: all 0.3s ease;
 }
 
-.card:hover,
-.bg-white:hover,
-.bg-slate-50:hover {
+.card:hover {
   box-shadow: var(--shadow-lg);
   transform: translateY(-2px);
   border-color: var(--primary-300);
 }
 
-html.dark .card,
-html.dark .bg-white,
-html.dark .bg-slate-50 {
+html.dark .card {
   background: var(--bg-tertiary);
   border-color: var(--border-dark);
 }
 
-html.dark .card:hover,
-html.dark .bg-white:hover,
-html.dark .bg-slate-50:hover {
+html.dark .card:hover {
   background: var(--bg-tertiary);
   border-color: var(--primary-600);
 }
@@ -265,29 +256,7 @@ span[class*='bg-'][class*='-100'] {
 }
 
 /* ===== SUCCESS/ERROR/WARNING STATES ===== */
-.bg-green-50,
-.text-green-700 {
-  color: white !important;
-  background: var(--success) !important;
-  padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
-}
-
-.bg-red-50,
-.text-red-700 {
-  color: white !important;
-  background: var(--error) !important;
-  padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
-}
-
-.bg-yellow-50,
-.text-yellow-700 {
-  color: white !important;
-  background: var(--warning) !important;
-  padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
-}
+/* These use Tailwind's built-in utilities — no override needed */
 
 /* ===== SPACING UTILITIES ===== */
 .space-y-4 > * + * {

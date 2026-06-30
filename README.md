@@ -1,216 +1,181 @@
-# Job Portal
+# JobPortal — Full-Stack Job Board Application
 
-A full-stack job portal that connects job seekers, recruiters, and admins.
+A full-featured job portal built with the MERN stack, supporting three distinct user roles: **Job Seekers**, **Recruiters**, and **Admins**. Designed with a focus on clean architecture, secure authentication, and a smooth user experience.
 
-## Overview
-
-This project includes:
-
-- A React frontend for job browsing, applications, profile management, and dashboards.
-- An Express + MongoDB backend with JWT auth, role-based access control, and file uploads.
-- Role-based workflows for:
-  - Job seekers: browse jobs, apply, manage profile/resume.
-  - Recruiters: post jobs, manage listings, view applicants.
-  - Admins: moderate users and jobs.
-
-## Tech Stack
-
-- Frontend: React, React Router, Axios, Tailwind CSS, Animate.css
-- Backend: Node.js, Express, MongoDB, Mongoose
-- Auth/Security: JWT, bcryptjs, Helmet, CORS, express-rate-limit
-- Uploads: Multer (local uploads), optional Cloudinary config
-
-## Project Structure
-
-```text
-job-portal/
-|- backend/                # Express API
-|  |- controllers/
-|  |- middleware/
-|  |- models/
-|  |- routes/
-|  |- services/
-|  |- uploads/
-|  `- server.js
-|- frontend/               # React app
-|  |- public/
-|  |- src/
-|  `- README.md
-|- uploads/                # Optional root uploads folder
-|- .env.example
-|- BUG_REPORT.md
-|- FIXES_APPLIED.md
-`- PROJECT_DOCUMENTATION.md
-```
+---
 
 ## Features
 
-- Secure auth with access token + refresh token flow
-- Role-based authorization (jobseeker, recruiter, admin)
-- Job listing, search, and advanced filters
-- Recruiter job posting and applicant management
-- Job seeker application tracking
-- Resume and profile picture upload
-- Pagination on key listing endpoints
-- Basic hardening with rate limits, CORS, Helmet, and validation
+### Job Seekers
+- Browse and search job listings with advanced filters (keyword, location, type, category)
+- Apply to jobs with resume upload
+- Track application status in a personal dashboard
+- Manage profile and profile picture
 
-## Prerequisites
+### Recruiters
+- Post jobs through a multi-step validated form
+- Manage active listings
+- View and manage applicants per job
+- Message applicants directly
 
-- Node.js 18+ (recommended)
-- npm 9+
-- MongoDB (local instance or Atlas)
+### Admins
+- Approve or reject job postings before they go live
+- Manage user roles (jobseeker, recruiter, admin)
+- View all users and applications
 
-## Environment Variables
+### Platform
+- JWT-based auth with access token + refresh token rotation
+- Password reset via security questions
+- Paginated listings across all major views
+- Rate limiting, CORS, and Helmet security headers
+- Responsive UI with dark mode support
 
-Create a `.env` file in the project root or `backend` folder (based on your run setup) using `.env.example`.
+---
 
-Required variables:
+## Tech Stack
 
-- `MONGODB_URI`
-- `JWT_SECRET`
-- `PORT` (default: 5000)
-- `NODE_ENV` (`development` or `production`)
-- `CORS_ORIGIN` (frontend URL, e.g. `http://localhost:3000`)
-- `REACT_APP_API_URL` (frontend API base, e.g. `http://localhost:5000/api`)
-- `REACT_APP_BACKEND_URL` (backend base, e.g. `http://localhost:5000`)
+| Layer | Technology |
+|---|---|
+| Frontend | React 19, React Router v6, Axios, Tailwind CSS |
+| Backend | Node.js, Express v5 |
+| Database | MongoDB, Mongoose v9 |
+| Auth | JWT (access + refresh tokens), bcryptjs |
+| Security | Helmet, express-rate-limit, CORS |
+| File Uploads | Multer |
+| Email | Nodemailer (Gmail SMTP) |
 
-Optional variables:
+---
 
-- `GMAIL_USER`, `GMAIL_PASS`
-- `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
+## Project Structure
 
-## Local Development
+```
+job-portal/
+├── backend/
+│   ├── controllers/
+│   ├── middleware/       # Auth, rate limiter, role checks
+│   ├── models/           # User, Job, Application, RefreshToken
+│   ├── routes/           # auth, jobs, applications, users
+│   ├── services/         # Email service
+│   └── server.js
+└── frontend/
+    └── src/
+        ├── components/   # Navbar, Footer, SearchFilters, Toast
+        ├── context/      # AuthContext
+        ├── pages/        # All route-level pages
+        └── utils/        # Validation, sanitization helpers
+```
 
-Open two terminals.
+---
 
-### 1) Start backend
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- MongoDB (local or Atlas)
+
+### Environment Variables
+
+Create a `.env` file inside the `backend/` folder:
+
+```env
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+PORT=5000
+NODE_ENV=development
+CORS_ORIGIN=http://localhost:3000
+
+# Optional
+GMAIL_USER=your_email@gmail.com
+GMAIL_PASS=your_app_password
+```
+
+Create a `.env` file inside the `frontend/` folder:
+
+```env
+REACT_APP_API_URL=http://localhost:5000/api
+REACT_APP_BACKEND_URL=http://localhost:5000
+```
+
+### Run Locally
 
 ```bash
+# Backend
 cd backend
 npm install
 npm run dev
-```
 
-Backend runs on `http://localhost:5000` by default.
-
-### 2) Start frontend
-
-```bash
+# Frontend (new terminal)
 cd frontend
 npm install
 npm start
 ```
 
-Frontend runs on `http://localhost:3000` by default.
+Backend: `http://localhost:5000` | Frontend: `http://localhost:3000`
 
-## Available Scripts
+---
 
-### Backend (`backend/package.json`)
+## API Highlights
 
-- `npm start` - Start server with Node
-- `npm run dev` - Start server with Nodemon
+All protected routes accept either:
+- `Authorization: Bearer <token>`
+- `x-auth-token: <token>`
 
-### Frontend (`frontend/package.json`)
+### Auth
+| Method | Endpoint | Access |
+|---|---|---|
+| POST | `/api/auth/register` | Public |
+| POST | `/api/auth/login` | Public |
+| GET | `/api/auth/me` | Auth |
+| POST | `/api/auth/refresh-token` | Public |
+| POST | `/api/auth/logout` | Auth |
+| POST | `/api/auth/forgot-password` | Public |
+| POST | `/api/auth/verify-security-answers` | Public |
+| POST | `/api/auth/reset-password` | Public |
 
-- `npm start` - Run development server
-- `npm run build` - Build production bundle
-- `npm test` - Run tests
+### Jobs
+| Method | Endpoint | Access |
+|---|---|---|
+| GET | `/api/jobs` | Public |
+| GET | `/api/jobs/search/advanced` | Public |
+| POST | `/api/jobs` | Recruiter / Admin |
+| PATCH | `/api/jobs/:id/approve` | Admin |
+| GET | `/api/jobs/admin/all-jobs` | Admin |
 
-## Authentication Notes
+### Applications
+| Method | Endpoint | Access |
+|---|---|---|
+| POST | `/api/applications` | Auth |
+| GET | `/api/applications/my-applications` | Auth |
+| GET | `/api/applications/recruiter` | Recruiter / Admin |
+| PUT | `/api/applications/:id` | Job Owner / Admin |
 
-- Protected routes accept either:
-  - `Authorization: Bearer <token>`
-  - `x-auth-token: <token>`
-- Access token is issued at login.
-- Refresh token endpoint: `POST /api/auth/refresh-token`.
+---
 
-## API Overview
+## Key Workflows
 
-Base URL: `http://localhost:5000/api`
+**Registration** → 3-step form (account info → role → security questions)
 
-### Auth Routes
+**Login** → JWT access token issued; refresh token stored (SHA-256 hashed in DB)
 
-- `POST /auth/register`
-- `POST /auth/login`
-- `GET /auth/me`
-- `POST /auth/refresh-token`
-- `POST /auth/logout`
+**Job Posting** → Multi-step form with per-step validation → Admin approval queue → Published
 
-### Job Routes
+**Password Reset** → Forgot Password → Security Questions Verification → Reset Password
 
-- `GET /jobs`
-- `GET /jobs/my-jobs` (auth)
-- `GET /jobs/search/advanced`
-- `GET /jobs/:id`
-- `POST /jobs` (recruiter/admin)
-- `PUT /jobs/:id` (owner/admin)
-- `DELETE /jobs/:id` (owner/admin)
-- `PATCH /jobs/:id/approve` (admin)
-- `PATCH /jobs/:id/reject` (admin)
-- `GET /jobs/admin/all-jobs` (admin)
+---
 
-### Application Routes
+## Future Improvements
 
-- `POST /applications` (auth, multipart supported)
-- `GET /applications/my-applications` (auth)
-- `GET /applications/recruiter` (recruiter/admin)
-- `GET /applications/job/:jobId` (recruiter/admin)
-- `PUT /applications/:id` (job owner/admin)
-- `POST /applications/:id/message` (authorized participants)
-- `DELETE /applications/:id` (applicant)
+- Email verification on registration
+- Real-time notifications (Socket.io)
+- Cloudinary integration for resume/image hosting
+- Saved jobs / bookmarks
+- Interview scheduling feature
+- Analytics dashboard for recruiters
 
-### User Routes
+---
 
-- `GET /users` (admin/recruiter)
-- `GET /users/job-seekers` (admin/recruiter)
-- `GET /users/profile` (auth)
-- `PUT /users/profile` (auth)
-- `GET /users/:id/profile` (admin/recruiter)
-- `PUT /users/:id/role` (admin)
-- `POST /users/upload-resume` (auth, multipart)
-- `POST /users/upload-profile-picture` (auth, multipart)
+## Author
 
-## File Uploads
-
-- Uploaded files are served from `/uploads`.
-- Resume upload is available via:
-  - application submission (`/api/applications`, field: `resume`)
-  - profile upload (`/api/users/upload-resume`, field: `resume`)
-- Profile picture upload field: `profilePicture`.
-
-## Deployment (Current Recommended Setup)
-
-- Backend: Render
-- Frontend: Netlify
-- Database: MongoDB Atlas
-
-High-level steps:
-
-1. Deploy MongoDB Atlas and get URI.
-2. Deploy backend from `backend` directory on Render.
-3. Deploy frontend from `frontend` directory on Netlify.
-4. Set `CORS_ORIGIN` to the frontend URL.
-5. Set frontend `REACT_APP_API_URL` to backend `/api` URL.
-
-See `frontend/README.md` for frontend deployment-specific notes.
-
-## Known Project Docs
-
-- `PROJECT_DOCUMENTATION.md` - Detailed architecture and file-by-file documentation
-- `BUG_REPORT.md` - Bug report details
-- `FIXES_APPLIED.md` - Applied fixes and verification checklist
-
-## Troubleshooting
-
-- CORS errors:
-  - Ensure `CORS_ORIGIN` exactly matches frontend URL (no trailing slash).
-- Auth errors on protected routes:
-  - Confirm token is sent in `Authorization` or `x-auth-token` header.
-- Upload issues:
-  - Confirm multipart request and correct field names.
-- MongoDB connection failure:
-  - Verify `MONGODB_URI` and network access rules (Atlas).
-
-## License
-
-This project is currently unlicensed for public distribution. Add a license file if you plan to publish it.
+**Khushi Thakur**
+[GitHub](https://github.com/Thakur-Khushi)

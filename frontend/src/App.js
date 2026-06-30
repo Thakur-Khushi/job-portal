@@ -12,6 +12,9 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import SecurityQuestionsVerify from './pages/SecurityQuestionsVerify';
 import JobList from './pages/JobList';
 import JobDetail from './pages/JobDetail';
 import Dashboard from './pages/Dashboard';
@@ -56,6 +59,9 @@ function AppContent() {
           <Route path="/" element={<Navigate to="/jobs" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verify-security" element={<SecurityQuestionsVerify />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/jobs" element={<JobList />} />
           <Route path="/jobs/:id" element={<JobDetail />} />
 

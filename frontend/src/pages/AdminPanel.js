@@ -17,17 +17,17 @@ const AdminPanel = () => {
 
   const fetchData = async () => {
     try {
-      // Fetch pending jobs
-      const jobsRes = await axios.get(`${API_URL}/jobs?status=pending`, {
+      // Fetch pending jobs (admin-only endpoint that respects status filter)
+      const jobsRes = await axios.get(`${API_URL}/jobs/admin/all-jobs?status=pending`, {
         headers: { 'x-auth-token': token },
       });
-      setPendingJobs(jobsRes.data);
+      setPendingJobs(jobsRes.data?.jobs || []);
 
       // Fetch all users
       const usersRes = await axios.get(`${API_URL}/users`, {
         headers: { 'x-auth-token': token },
       });
-      setUsers(usersRes.data);
+      setUsers(usersRes.data?.users || []);
     } catch (err) {
       console.error('Error fetching admin data:', err);
     } finally {
@@ -37,12 +37,12 @@ const AdminPanel = () => {
 
   const handleJobApproval = async (jobId, status) => {
     try {
-      await axios.put(
-        `${API_URL}/jobs/${jobId}/approve`,
-        { status },
+      const endpoint = status === 'approved' ? 'approve' : 'reject';
+      await axios.patch(
+        `${API_URL}/jobs/${jobId}/${endpoint}`,
+        {},
         { headers: { 'x-auth-token': token } },
       );
-      // Refresh data
       fetchData();
     } catch (err) {
       console.error('Error updating job status:', err);

@@ -3,24 +3,34 @@ const nodemailer = require('nodemailer');
 // Create transporter (configure with your email service)
 // For testing: use ethereal email service
 // For production: use SendGrid, Gmail, or another email service
-const createTransporter = () => {
-  // Option 1: Ethereal Email (for testing/development)
-  // Remove this and use Option 2 for production
+const createTransporter = async () => {
+  // Development: prefer Ethereal. If ETHEREAL creds are present, use them,
+  // otherwise create a temporary test account so devs can view the message preview URL.
   if (process.env.NODE_ENV !== 'production') {
+    if (process.env.ETHEREAL_USER && process.env.ETHEREAL_PASS) {
+      return nodemailer.createTransport({
+        host: 'smtp.ethereal.email',
+        port: 587,
+        auth: {
+          user: process.env.ETHEREAL_USER,
+          pass: process.env.ETHEREAL_PASS,
+        },
+      });
+    }
+
+    // Create a test account for development if none provided
+    const testAccount = await nodemailer.createTestAccount();
     return nodemailer.createTransport({
       host: 'smtp.ethereal.email',
       port: 587,
       auth: {
-        user: process.env.ETHEREAL_USER, // Optional for testing
-        pass: process.env.ETHEREAL_PASS, // Optional for testing
+        user: testAccount.user,
+        pass: testAccount.pass,
       },
     });
   }
 
-  // Option 2: Gmail / Production Email Service
-  // Set these environment variables:
-  // GMAIL_USER=your-email@gmail.com
-  // GMAIL_PASS=your-app-specific-password
+  // Production: Gmail or equivalent SMTP provider
   return nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -39,7 +49,7 @@ const createTransporter = () => {
  */
 const sendVerificationEmail = async (email, verificationToken, baseUrl) => {
   try {
-    const transporter = createTransporter();
+    const transporter = await createTransporter();
 
     const verificationLink = `${baseUrl}/verify-email?token=${verificationToken}`;
 
@@ -81,6 +91,9 @@ const sendVerificationEmail = async (email, verificationToken, baseUrl) => {
 
     const result = await transporter.sendMail(mailOptions);
     console.log('Verification email sent:', result.messageId);
+    // If using a test account (Ethereal), log the preview URL so developers can open the email
+    const preview = nodemailer.getTestMessageUrl(result);
+    if (preview) console.log('Preview URL:', preview);
     return result;
   } catch (err) {
     console.error('Error sending verification email:', err);
@@ -97,9 +110,9 @@ const sendVerificationEmail = async (email, verificationToken, baseUrl) => {
  */
 const sendPasswordResetEmail = async (email, resetToken, baseUrl) => {
   try {
-    const transporter = createTransporter();
+    const transporter = await createTransporter();
 
-    const resetLink = `${baseUrl}/reset-password?token=${resetToken}`;
+    const resetLink = `${baseUrl}/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
 
     const mailOptions = {
       from: process.env.GMAIL_USER || 'jobportal@example.com',
@@ -139,6 +152,8 @@ const sendPasswordResetEmail = async (email, resetToken, baseUrl) => {
 
     const result = await transporter.sendMail(mailOptions);
     console.log('Password reset email sent:', result.messageId);
+    const preview = nodemailer.getTestMessageUrl(result);
+    if (preview) console.log('Preview URL:', preview);
     return result;
   } catch (err) {
     console.error('Error sending password reset email:', err);
@@ -154,7 +169,7 @@ const sendPasswordResetEmail = async (email, resetToken, baseUrl) => {
  */
 const sendWelcomeEmail = async (email, name) => {
   try {
-    const transporter = createTransporter();
+    const transporter = await createTransporter();
 
     const mailOptions = {
       from: process.env.GMAIL_USER || 'jobportal@example.com',
@@ -191,6 +206,8 @@ const sendWelcomeEmail = async (email, name) => {
 
     const result = await transporter.sendMail(mailOptions);
     console.log('Welcome email sent:', result.messageId);
+    const preview = nodemailer.getTestMessageUrl(result);
+    if (preview) console.log('Preview URL:', preview);
     return result;
   } catch (err) {
     console.error('Error sending welcome email:', err);

@@ -6,13 +6,10 @@ const refreshTokenSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-  token: {
+  tokenHash: {
     type: String,
     required: true,
     unique: true,
-  },
-  tokenHash: {
-    type: String,
   },
   expiresAt: {
     type: Date,

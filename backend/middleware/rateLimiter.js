@@ -44,8 +44,26 @@ const generalLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Rate limiting for password reset requests - 3 attempts per hour
+const passwordResetLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3,
+  message: 'Too many password reset attempts. Please try again after 1 hour.',
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res
+      .status(429)
+      .json({ msg: 'Too many password reset attempts. Please try again later.' });
+  },
+  skip: (req) => {
+    return req.method !== 'POST';
+  },
+});
+
 module.exports = {
   loginLimiter,
   registerLimiter,
   generalLimiter,
+  passwordResetLimiter,
 };

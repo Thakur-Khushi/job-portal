@@ -13,26 +13,22 @@ const JobList = () => {
   const [error, setError] = useState('');
   const [pagination, setPagination] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeSearchParams, setActiveSearchParams] = useState({});
   const { user } = useAuth();
 
   useEffect(() => {
-    if (currentPage === 1) {
-      fetchJobs();
-    } else {
-      setCurrentPage(1);
-    }
+    fetchJobs({}, 1);
   }, []);
 
-  const fetchJobs = async (searchParams = {}) => {
+  const fetchJobs = async (searchParams = {}, page = 1) => {
     try {
       setLoading(true);
       setError('');
-      setCurrentPage(1); // Reset to page 1 when searching
 
       // Build query string with search parameters
       const queryParams = new URLSearchParams({
         ...searchParams,
-        page: 1,
+        page,
         limit: 10,
       }).toString();
 
@@ -56,7 +52,9 @@ const JobList = () => {
   };
 
   const handleSearch = (searchParams) => {
-    fetchJobs(searchParams);
+    setActiveSearchParams(searchParams);
+    setCurrentPage(1);
+    fetchJobs(searchParams, 1);
   };
 
   if (loading) {
@@ -171,7 +169,11 @@ const JobList = () => {
             {pagination.totalPages > 1 && (
               <div className="flex justify-center items-center gap-2 mt-8">
                 <button
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  onClick={() => {
+                    const newPage = Math.max(1, currentPage - 1);
+                    setCurrentPage(newPage);
+                    fetchJobs(activeSearchParams, newPage);
+                  }}
                   disabled={currentPage === 1}
                   className="px-4 py-2 rounded-lg bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition"
                 >
@@ -190,7 +192,10 @@ const JobList = () => {
                     .map((page) => (
                       <button
                         key={page}
-                        onClick={() => setCurrentPage(page)}
+                        onClick={() => {
+                          setCurrentPage(page);
+                          fetchJobs(activeSearchParams, page);
+                        }}
                         className={`px-3 py-2 rounded-lg transition ${
                           currentPage === page
                             ? 'bg-blue-600 text-white'
@@ -203,11 +208,11 @@ const JobList = () => {
                 </div>
 
                 <button
-                  onClick={() =>
-                    setCurrentPage(
-                      Math.min(pagination.totalPages, currentPage + 1),
-                    )
-                  }
+                  onClick={() => {
+                    const newPage = Math.min(pagination.totalPages, currentPage + 1);
+                    setCurrentPage(newPage);
+                    fetchJobs(activeSearchParams, newPage);
+                  }}
                   disabled={currentPage === pagination.totalPages}
                   className="px-4 py-2 rounded-lg bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition"
                 >

@@ -40,7 +40,7 @@ const Dashboard = () => {
       setProfile(res.data.profile || {});
       setEditForm({
         title: res.data.profile?.title || '',
-        phone: res.data.phone || '',
+        phone: res.data.user?.phone || '',
         location: res.data.profile?.location || '',
       });
     } catch (err) {
@@ -75,7 +75,7 @@ const Dashboard = () => {
                 `${API_URL}/applications/job/${job._id}`,
                 { headers: { 'x-auth-token': token } },
               );
-              return { ...job, applicantCount: (apps.data || []).length };
+              return { ...job, applicantCount: apps.data?.applications?.length || 0 };
             } catch (err) {
               console.error('Error fetching applicants for job', job._id, err);
               return { ...job, applicantCount: 0 };
@@ -333,10 +333,10 @@ const Dashboard = () => {
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="font-semibold text-lg dark:text-white">
-                        {app.job.title}
+                        {app.job?.title || 'Job no longer available'}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-200">
-                        {app.job.company}
+                        {app.job?.company}
                       </p>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
                         Applied: {new Date(app.appliedAt).toLocaleDateString()}

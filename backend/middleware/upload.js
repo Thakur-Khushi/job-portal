@@ -47,11 +47,6 @@ const fileFilter = (req, file, cb) => {
     return cb(new Error('Invalid filename: double extensions not allowed'));
   }
 
-  // Check file size (5MB limit)
-  if (file.size > 5000000) {
-    return cb(new Error('File size exceeds 5MB limit'));
-  }
-
   if (isValidMimeType && isValidExt) {
     return cb(null, true);
   } else {

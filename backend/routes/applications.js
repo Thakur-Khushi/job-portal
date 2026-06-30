@@ -26,6 +26,10 @@ router.post('/', auth, upload.single('resume'), async (req, res) => {
       return res.status(404).json({ msg: 'Job not found' });
     }
 
+    if (job.status !== 'approved') {
+      return res.status(400).json({ msg: 'This job is not open for applications' });
+    }
+
     const existing = await Application.findOne({
       job: jobId,
       applicant: req.user.id,
@@ -70,7 +74,7 @@ router.get('/my-applications', auth, async (req, res) => {
     res.json(applications);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 
@@ -185,13 +189,18 @@ router.put('/:id', auth, async (req, res) => {
       return res.status(403).json({ msg: 'Access denied' });
     }
 
+    const VALID_STATUSES = ['pending', 'reviewed', 'shortlisted', 'rejected', 'hired'];
+    if (!VALID_STATUSES.includes(req.body.status)) {
+      return res.status(400).json({ msg: `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}` });
+    }
+
     application.status = req.body.status;
     await application.save();
 
     res.json(application);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 
@@ -235,7 +244,7 @@ router.post('/:id/message', auth, async (req, res) => {
     res.json(populated.communication);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 
@@ -253,11 +262,11 @@ router.delete('/:id', auth, async (req, res) => {
       return res.status(403).json({ msg: 'Access denied' });
     }
 
-    await application.remove();
+    await application.deleteOne();
     res.json({ msg: 'Application withdrawn' });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 

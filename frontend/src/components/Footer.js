@@ -5,158 +5,98 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer
-      className="pt-16 pb-6 border-t"
-      style={{
-        background: 'var(--bg-secondary)',
-        color: 'var(--text-600)',
-        borderColor: 'var(--border-light)'
-      }}
-    >
-      <div className="container mx-auto px-4">
-        {/* Main Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-          {/* Brand Section */}
-          <div>
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                JP
+    <footer className="border-t bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
+
+          {/* Brand */}
+          <div className="md:col-span-1">
+            <div className="flex items-center space-x-2.5 mb-3">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">JP</span>
               </div>
-              <span className="font-bold text-xl" style={{color: 'var(--text-900)'}}>JobPortal</span>
+              <span className="font-semibold text-gray-900 dark:text-white text-base">JobPortal</span>
             </div>
-            <p className="text-sm leading-relaxed max-w-xs" style={{color: 'var(--text-400)'}}>
-              Your gateway to career opportunities. Connect talent with companies.
+            <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed max-w-xs">
+              Connecting talent with opportunity. Find your next role or hire your next great hire.
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Job Seekers */}
           <div>
-            <h3 className="font-semibold text-base mb-4 uppercase tracking-wider" style={{color: 'var(--text-900)'}}>Quick Links</h3>
-            <ul className="space-y-3 text-sm">
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">
+              Job Seekers
+            </h4>
+            <ul className="space-y-2.5">
               <li>
-                <Link
-                  to="/jobs"
-                  className="transition-colors duration-200"
-                  style={{color: 'var(--text-400)'}}
-                  onMouseOver={e => e.currentTarget.style.color = 'var(--primary-600)'}
-                  onMouseOut={e => e.currentTarget.style.color = 'var(--text-400)'}
-                >
-                  → Browse Jobs
+                <Link to="/jobs" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                  Browse Jobs
                 </Link>
               </li>
               <li>
-                <span className="text-sm" style={{color: 'var(--text-600)'}}>• Companies</span>
+                <Link to="/register" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                  Create Account
+                </Link>
               </li>
               <li>
-                <span className="text-sm" style={{color: 'var(--text-600)'}}>• About Us</span>
-              </li>
-              <li>
-                <span className="text-sm" style={{color: 'var(--text-600)'}}>• Contact</span>
+                <Link to="/login" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                  Sign In
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* For Employers */}
+          {/* Employers */}
           <div>
-            <h3 className="font-semibold text-base mb-4 uppercase tracking-wider" style={{color: 'var(--text-900)'}}>For Employers</h3>
-            <ul className="space-y-3 text-sm">
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">
+              Employers
+            </h4>
+            <ul className="space-y-2.5">
               <li>
-                <Link
-                  to="/post-job"
-                  className="transition-colors duration-200"
-                  style={{color: 'var(--text-400)'}}
-                  onMouseOver={e => e.currentTarget.style.color = 'var(--primary-600)'}
-                  onMouseOut={e => e.currentTarget.style.color = 'var(--text-400)'}
-                >
-                  → Post a Job
+                <Link to="/post-job" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                  Post a Job
                 </Link>
               </li>
               <li>
-                <span className="text-sm" style={{color: 'var(--text-600)'}}>• Pricing</span>
+                <Link to="/recruiter/job-seekers" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                  Browse Candidates
+                </Link>
               </li>
               <li>
-                <span className="text-sm" style={{color: 'var(--text-600)'}}>• Resources</span>
-              </li>
-              <li>
-                <span className="text-sm" style={{color: 'var(--text-600)'}}>• Analytics</span>
+                <Link to="/dashboard" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                  Recruiter Dashboard
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Newsletter & Social */}
+          {/* Company */}
           <div>
-            <h3 className="font-semibold text-base mb-4 uppercase tracking-wider" style={{color: 'var(--text-900)'}}>Connect With Us</h3>
-            <div className="space-y-3">
-              <p className="text-sm" style={{color: 'var(--text-400)'}}>Follow us on social media</p>
-              <div className="flex space-x-2">
-                <button
-                  disabled
-                  className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors duration-200 cursor-not-allowed opacity-50"
-                  style={{background: 'var(--bg-tertiary)', color: 'var(--primary-600)'}}
-                  title="Facebook"
-                  aria-label="Facebook"
-                >
-                  f
-                </button>
-                <button
-                  disabled
-                  className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors duration-200 cursor-not-allowed opacity-50"
-                  style={{background: 'var(--bg-tertiary)', color: 'var(--primary-500)'}}
-                  title="Twitter"
-                  aria-label="Twitter"
-                >
-                  𝕏
-                </button>
-                <button
-                  disabled
-                  className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors duration-200 cursor-not-allowed opacity-50"
-                  style={{background: 'var(--bg-tertiary)', color: 'var(--accent-500)'}}
-                  title="Instagram"
-                  aria-label="Instagram"
-                >
-                  📷
-                </button>
-                <button
-                  disabled
-                  className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors duration-200 cursor-not-allowed opacity-50"
-                  style={{background: 'var(--bg-tertiary)', color: 'var(--primary-700)'}}
-                  title="LinkedIn"
-                  aria-label="LinkedIn"
-                >
-                  in
-                </button>
-              </div>
-            </div>
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">
+              Company
+            </h4>
+            <ul className="space-y-2.5">
+              <li>
+                <span className="text-sm text-gray-400 dark:text-gray-600 cursor-default">About Us</span>
+              </li>
+              <li>
+                <span className="text-sm text-gray-400 dark:text-gray-600 cursor-default">Privacy Policy</span>
+              </li>
+              <li>
+                <span className="text-sm text-gray-400 dark:text-gray-600 cursor-default">Terms of Service</span>
+              </li>
+            </ul>
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="pt-6" style={{borderTop: '1px solid var(--border-light)'}}>
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <p className="text-sm" style={{color: 'var(--text-400)'}}>
-              &copy; {currentYear} JobPortal. All rights reserved.
-            </p>
-            <div className="flex items-center gap-6 mt-4 md:mt-0 text-sm">
-              <a
-                href="#privacy"
-                className="transition-colors"
-                style={{color: 'var(--text-400)'}}
-                onMouseOver={e => e.currentTarget.style.color = 'var(--primary-600)'}
-                onMouseOut={e => e.currentTarget.style.color = 'var(--text-400)'}
-              >
-                Privacy Policy
-              </a>
-              <a
-                href="#terms"
-                className="transition-colors"
-                style={{color: 'var(--text-400)'}}
-                onMouseOver={e => e.currentTarget.style.color = 'var(--primary-600)'}
-                onMouseOut={e => e.currentTarget.style.color = 'var(--text-400)'}
-              >
-                Terms of Service
-              </a>
-            </div>
-          </div>
+        {/* Bottom bar */}
+        <div className="border-t border-gray-200 dark:border-gray-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-gray-400 dark:text-gray-500">
+            &copy; {currentYear} JobPortal. All rights reserved.
+          </p>
+          <p className="text-xs text-gray-400 dark:text-gray-600">
+            Built with care for job seekers everywhere
+          </p>
         </div>
       </div>
     </footer>

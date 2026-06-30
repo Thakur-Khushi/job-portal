@@ -97,7 +97,7 @@ const JobDetail = () => {
       const res = await axios.get(`${API_URL}/applications/job/${id}`, {
         headers: { 'x-auth-token': token },
       });
-      setApplicants(res.data || []);
+      setApplicants(res.data?.applications || []);
     } catch (err) {
       console.error('Error fetching applicants:', err);
       setApplicants([]);
@@ -140,8 +140,6 @@ const JobDetail = () => {
     }
     setFormError('');
 
-    console.log('handleApply called, user:', user, 'id:', id, 'token:', token);
-
     if (!user) {
       navigate('/login');
       return;
@@ -163,18 +161,11 @@ const JobDetail = () => {
         formData.append('resume', resume);
       }
 
-      console.log('Sending application with:', {
-        jobId: id,
-        coverLetter,
-        useProfileResume,
-      });
-
       const response = await axios.post(`${API_URL}/applications`, formData, {
         headers: { 'x-auth-token': token },
         timeout: 30000,
       });
 
-      console.log('Application submitted successfully:', response.data);
       setHasApplied(true);
       setShowApplicationForm(false);
       setToastMessage('🎉 Application submitted successfully!');
@@ -202,19 +193,23 @@ const JobDetail = () => {
   const handleWithdrawApplication = async () => {
     setWithdrawing(true);
     try {
-      const application = (applicants || []).find(
-        (app) =>
-          app?.jobseeker?._id === user?.id || app?.applicant === user?.id,
+      const myAppsRes = await axios.get(`${API_URL}/applications/my-applications`, {
+        headers: { 'x-auth-token': token },
+      });
+      const application = (myAppsRes.data || []).find(
+        (app) => app?.job?._id === id,
       );
-      if (application) {
-        await axios.delete(`${API_URL}/applications/${application._id}`, {
-          headers: { 'x-auth-token': token },
-        });
-        setHasApplied(false);
-        setShowWithdrawConfirm(false);
-        setToastMessage('✓ Application withdrawn successfully');
-        setShowToast(true);
+      if (!application) {
+        setFormError('❌ Application not found');
+        return;
       }
+      await axios.delete(`${API_URL}/applications/${application._id}`, {
+        headers: { 'x-auth-token': token },
+      });
+      setHasApplied(false);
+      setShowWithdrawConfirm(false);
+      setToastMessage('✓ Application withdrawn successfully');
+      setShowToast(true);
     } catch (err) {
       console.error('Error withdrawing:', err);
       setFormError('❌ Error withdrawing application');

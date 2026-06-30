@@ -6,7 +6,15 @@ const crypto = require('crypto');
 const User = require('../models/User');
 const RefreshToken = require('../models/RefreshToken');
 const auth = require('../middleware/auth');
-const { loginLimiter, registerLimiter } = require('../middleware/rateLimiter');
+const { loginLimiter, registerLimiter, passwordResetLimiter } = require('../middleware/rateLimiter');
+
+const ALLOWED_SECURITY_QUESTIONS = [
+  "What is your favorite color?",
+  "What is your favorite food?",
+  "What was the name of your first pet?",
+  "What city were you born in?",
+  "What is your mother's maiden name?",
+];
 
 /**
  * Generate a new refresh token for a user
@@ -26,7 +34,6 @@ const generateRefreshToken = async (userId) => {
 
     const tokenDoc = new RefreshToken({
       userId,
-      token: refreshToken,
       tokenHash: refreshTokenHash,
       expiresAt,
     });
@@ -46,13 +53,15 @@ const generateRefreshToken = async (userId) => {
 // Register user
 router.post('/register', registerLimiter, async (req, res, next) => {
   try {
-    let { name, email, password, role, company } = req.body;
+    let { name, email, password, role, company, securityQuestions } = req.body;
 
     // Input validation & sanitization
     if (!name || !name.trim())
       return res.status(400).json({ msg: 'Name is required' });
     if (!email || !email.trim())
       return res.status(400).json({ msg: 'Email is required' });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
+      return res.status(400).json({ msg: 'Invalid email address' });
     if (!password || password.length < 6)
       return res
         .status(400)
@@ -63,6 +72,18 @@ router.post('/register', registerLimiter, async (req, res, next) => {
       return res
         .status(400)
         .json({ msg: 'Company name required for recruiters' });
+
+    // Validate security questions
+    if (!securityQuestions || securityQuestions.length !== 2)
+      return res.status(400).json({ msg: 'Exactly 2 security questions are required' });
+    for (const sq of securityQuestions) {
+      if (!ALLOWED_SECURITY_QUESTIONS.includes(sq.question))
+        return res.status(400).json({ msg: 'Invalid security question' });
+      if (!sq.answer || !sq.answer.trim())
+        return res.status(400).json({ msg: 'Security question answer is required' });
+    }
+    if (securityQuestions[0].question === securityQuestions[1].question)
+      return res.status(400).json({ msg: 'Security questions must be different' });
 
     // Sanitize inputs
     name = name.trim();
@@ -75,18 +96,27 @@ router.post('/register', registerLimiter, async (req, res, next) => {
       return res.status(400).json({ msg: 'User already exists' });
     }
 
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Hash security question answers
+    const hashedQuestions = await Promise.all(
+      securityQuestions.map(async (sq) => {
+        const answerHash = await bcrypt.hash(sq.answer.trim().toLowerCase(), 10);
+        return { question: sq.question, answerHash };
+      })
+    );
+
     // Create new user
     user = new User({
       name,
       email,
-      password,
+      password: hashedPassword,
       role,
       company,
+      securityQuestions: hashedQuestions,
     });
-
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
 
     await user.save();
 
@@ -100,7 +130,7 @@ router.post('/register', registerLimiter, async (req, res, next) => {
       },
     });
   } catch (err) {
-    next(err); // Pass error to error handler
+    next(err);
   }
 });
 
@@ -260,6 +290,110 @@ router.post('/logout', auth, async (req, res, next) => {
     }
 
     res.json({ msg: 'Logged out successfully' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Forgot Password - Verify email and return security questions
+router.post('/forgot-password', passwordResetLimiter, async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const user = await User.findOne({ email: normalizedEmail });
+
+    // Always return the same shape to prevent email enumeration
+    if (!user || !user.securityQuestions || user.securityQuestions.length < 2) {
+      return res.json({ questions: null });
+    }
+
+    const questions = user.securityQuestions.map((sq) => sq.question);
+    res.json({ questions });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Verify security answers and return a short-lived reset token
+router.post('/verify-security-answers', passwordResetLimiter, async (req, res, next) => {
+  try {
+    const { email, answers } = req.body;
+
+    if (!email || !answers || answers.length !== 2) {
+      return res.status(400).json({ error: 'Email and 2 answers are required' });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
+
+    // Generic error to avoid leaking account existence
+    const genericError = { error: 'Incorrect answers. Please try again.' };
+
+    if (!user || !user.securityQuestions || user.securityQuestions.length < 2) {
+      return res.status(400).json(genericError);
+    }
+
+    // Compare both answers (case-insensitive)
+    const [match1, match2] = await Promise.all([
+      bcrypt.compare(answers[0].trim().toLowerCase(), user.securityQuestions[0].answerHash),
+      bcrypt.compare(answers[1].trim().toLowerCase(), user.securityQuestions[1].answerHash),
+    ]);
+
+    if (!match1 || !match2) {
+      return res.status(400).json(genericError);
+    }
+
+    // Both answers correct — generate a 15-minute reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+    user.passwordResetToken = resetTokenHash;
+    user.passwordResetExpires = new Date(Date.now() + 15 * 60 * 1000);
+    await user.save();
+
+    res.json({ resetToken });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Reset Password - Verify token and set new password
+router.post('/reset-password', passwordResetLimiter, async (req, res, next) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+      return res.status(400).json({ error: 'Token and new password are required' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    }
+
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
+    const user = await User.findOne({
+      passwordResetToken: tokenHash,
+      passwordResetExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid or expired reset token' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    user.passwordResetToken = null;
+    user.passwordResetExpires = null;
+    await user.save();
+
+    res.json({ msg: 'Password reset successfully! You can now login with your new password.' });
   } catch (err) {
     next(err);
   }

@@ -208,7 +208,6 @@ const PostJob = () => {
                     <input
                       type="text"
                       name="location"
-                      placeholder="e.g. New York, NY or Remote/Hybrid"
                       value={formData.location}
                       onChange={handleChange}
                       className="modern-input"
@@ -385,7 +384,7 @@ const PostJob = () => {
               {currentStep < 3 ? (
                 <button
                   type="button"
-                  onClick={() => setCurrentStep((prev) => prev + 1)}
+                  onClick={nextStep}
                   className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
                   Next Step →

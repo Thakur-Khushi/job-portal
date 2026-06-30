@@ -86,6 +86,18 @@ const userSchema = new mongoose.Schema({
 
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+
+  // Security Questions for password reset
+  securityQuestions: [
+    {
+      question: { type: String, required: true },
+      answerHash: { type: String, required: true },
+    },
+  ],
+
+  // Password Reset Fields
+  passwordResetToken: { type: String, default: null },
+  passwordResetExpires: { type: Date, default: null },
 });
 
 // Update timestamp on save

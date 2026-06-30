@@ -126,15 +126,8 @@ router.get('/search/advanced', async (req, res) => {
       query.category = { $regex: category, $options: 'i' };
     }
 
-    // Salary range filter (if salary is a string like "50000-60000", we parse it)
-    if (minSalary || maxSalary) {
-      query.$expr = {
-        $range: [],
-      };
-      // Note: Salary filtering is complex with string format
-      // Ideally, salary should be numeric fields (minSalary, maxSalary) in schema
-      // For now, we'll skip complex salary parsing
-    }
+    // Salary range filter is not supported while salary is stored as a free-text string.
+    // Numeric minSalary/maxSalary fields would be needed in the schema for proper filtering.
 
     // Filter by posting date
     if (postedAfter) {
@@ -198,7 +191,7 @@ router.get('/:id', async (req, res) => {
     res.json(job);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 
@@ -239,7 +232,7 @@ router.post('/', auth, async (req, res) => {
     res.json(job);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 
@@ -256,15 +249,20 @@ router.put('/:id', auth, async (req, res) => {
       return res.status(403).json({ msg: 'Access denied' });
     }
 
+    const { title, company, location, description, requirements, salary, type, category, deadline } = req.body;
+    const allowedUpdates = { title, company, location, description, requirements, salary, type, category, deadline };
+    // Strip undefined keys so unset fields are not overwritten
+    Object.keys(allowedUpdates).forEach(k => allowedUpdates[k] === undefined && delete allowedUpdates[k]);
+
     job = await Job.findByIdAndUpdate(
       req.params.id,
-      { $set: req.body },
+      { $set: allowedUpdates },
       { returnDocument: 'after' },
     );
     res.json(job);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 
@@ -285,7 +283,7 @@ router.delete('/:id', auth, async (req, res) => {
     res.json({ msg: 'Job removed' });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 
