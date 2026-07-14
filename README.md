@@ -74,28 +74,6 @@ job-portal/
 - Node.js 18+
 - MongoDB (local or Atlas)
 
-### Environment Variables
-
-Create a `.env` file inside the `backend/` folder:
-
-```env
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-PORT=5000
-NODE_ENV=development
-CORS_ORIGIN=http://localhost:3000
-
-# Optional
-GMAIL_USER=your_email@gmail.com
-GMAIL_PASS=your_app_password
-```
-
-Create a `.env` file inside the `frontend/` folder:
-
-```env
-REACT_APP_API_URL=http://localhost:5000/api
-REACT_APP_BACKEND_URL=http://localhost:5000
-```
 
 ### Run Locally
 
