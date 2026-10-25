@@ -48,4 +48,6 @@ backend/uploads/
 
 # Build artifacts
 backend/dist/
-.env.example
+
+# Local run output
+backend/output.txt
